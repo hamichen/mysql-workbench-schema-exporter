@@ -55,7 +55,7 @@ class Bootstrap
 
              // check if mwbse is installed via composer
              if (strpos($pattern, 'vendor' . $DS . 'hamichen' . $DS) !== false) {
-                 $pattern = str_replace('hamichen' . $DS . 'hamichen' . $DS, 'hamichen' . $DS . '*' . $DS, $pattern);
+                 $pattern = str_replace('hamichen' . $DS . 'mysql-workbench-schema-exporter' . $DS, 'hamichen' . $DS . '*' . $DS, $pattern);
              }
              foreach (glob($pattern) as $filename) {
                  $dirs = explode(DIRECTORY_SEPARATOR, dirname(realpath($filename)));
