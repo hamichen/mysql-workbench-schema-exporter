@@ -54,8 +54,8 @@ class Bootstrap
              $pattern = implode($DS, array(__DIR__, 'Formatter', '*', '*', 'Formatter.php'));
 
              // check if mwbse is installed via composer
-             if (strpos($pattern, 'vendor' . $DS . 'mysql-workbench-schema-exporter' . $DS) !== false) {
-                 $pattern = str_replace('mysql-workbench-schema-exporter' . $DS . 'mysql-workbench-schema-exporter' . $DS, 'mysql-workbench-schema-exporter' . $DS . '*' . $DS, $pattern);
+             if (strpos($pattern, 'vendor' . $DS . 'hamichen' . $DS) !== false) {
+                 $pattern = str_replace('hamichen' . $DS . 'hamichen' . $DS, 'hamichen' . $DS . '*' . $DS, $pattern);
              }
              foreach (glob($pattern) as $filename) {
                  $dirs = explode(DIRECTORY_SEPARATOR, dirname(realpath($filename)));
@@ -66,7 +66,7 @@ class Bootstrap
                  self::$formatters[$formatter] = $formatterClass;
              }
 
-             if ($position = strpos(__DIR__, 'vendor' . $DS . 'mysql-workbench-schema-exporter' . $DS)) {
+             if ($position = strpos(__DIR__, 'vendor' . $DS . 'hamichen' . $DS)) {
                  // possibly executed via composer. There might be more exporters in the current project
                  $currentProject = substr(__DIR__, 0, $position);
 
