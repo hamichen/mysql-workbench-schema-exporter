@@ -29,7 +29,8 @@ namespace MwbExporter\Model;
 
 use MwbExporter\Formatter\FormatterInterface;
 use MwbExporter\Writer\WriterInterface;
-use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Inflector\Inflector;
+use Doctrine\Inflector\NoopWordInflector;
 
 class Table extends Base
 {
@@ -72,9 +73,17 @@ class Table extends Base
      */
     protected $isM2M = null;
 
+    /**
+     *
+     * @var Inflector
+     */
+    protected $inflector ;
+
     protected function init()
     {
         $this->getDocument()->addLog(sprintf('Processing table "%s"', $this->getRawTableName()));
+
+        $this->inflector = new Inflector(new NoopWordInflector(), new NoopWordInflector());
         $this->initColumns();
     }
 
@@ -318,12 +327,11 @@ class Table extends Base
      */
     public function getModelName()
     {
-        $tableName = $this->getRawTableName();
-
+        $tableName = $this->getRawTableName();        
         // check if table name is plural --> convert to singular
         if (
             !$this->getConfig()->get(FormatterInterface::CFG_SKIP_PLURAL) &&
-            ($tableName != ($singular = Inflector::singularize($tableName)))
+            ($tableName != ($singular = $this->inflector->singularize($tableName)))
         ) {
             $tableName = $singular;
         }
@@ -338,7 +346,7 @@ class Table extends Base
      */
     public function getPluralModelName()
     {
-        return Inflector::pluralize($this->getModelName());
+        return $this->inflector->pluralize($this->getModelName());
     }
 
     /**
