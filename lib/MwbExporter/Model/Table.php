@@ -29,8 +29,15 @@ namespace MwbExporter\Model;
 
 use MwbExporter\Formatter\FormatterInterface;
 use MwbExporter\Writer\WriterInterface;
-use Doctrine\Inflector\Inflector;
-use Doctrine\Inflector\NoopWordInflector;
+use Doctrine\Inflector\InflectorFactory;
+use Doctrine\Inflector\Rules\Pattern;
+use Doctrine\Inflector\Rules\Patterns;
+use Doctrine\Inflector\Rules\Ruleset;
+use Doctrine\Inflector\Rules\Substitution;
+use Doctrine\Inflector\Rules\Substitutions;
+use Doctrine\Inflector\Rules\Transformation;
+use Doctrine\Inflector\Rules\Transformations;
+use Doctrine\Inflector\Rules\Word;
 
 class Table extends Base
 {
@@ -83,7 +90,32 @@ class Table extends Base
     {
         $this->getDocument()->addLog(sprintf('Processing table "%s"', $this->getRawTableName()));
 
-        $this->inflector = new Inflector(new NoopWordInflector(), new NoopWordInflector());
+        // $this->inflector = new Inflector(new NoopWordInflector(), new NoopWordInflector());
+        $this->inflector = InflectorFactory::create()
+        ->withSingularRules(
+            new Ruleset(
+                new Transformations(
+                    new Transformation (new Pattern('/^(bil)er$/i'), '\1'),
+                    new Transformation(new Pattern('/^(inflec|contribu)tors$/i'), '\1ta')
+                ),
+                new Patterns(new Pattern('singulars')),
+                new Substitutions(new Substitution(new Word('spins'), new Word('spinor')))
+            )
+        )
+        ->withPluralRules(
+            new Ruleset(
+                new Transformations(
+                    new Transformation(new Pattern('^(bil)er$'), '\1'),
+                    new Transformation(new Pattern('^(inflec|contribu)tors$'), '\1ta')
+                ),
+                new Patterns(new Pattern('noflect'), new Pattern('abtuse')),
+                new Substitutions(
+                    new Substitution(new Word('amaze'), new Word('amazable')),
+                    new Substitution(new Word('phone'), new Word('phonezes'))
+                )
+            )
+        )
+        ->build();
         $this->initColumns();
     }
 
@@ -327,11 +359,12 @@ class Table extends Base
      */
     public function getModelName()
     {
-        $tableName = $this->getRawTableName();        
+        $tableName = $this->getRawTableName();
+        
         // check if table name is plural --> convert to singular
         if (
             !$this->getConfig()->get(FormatterInterface::CFG_SKIP_PLURAL) &&
-            ($tableName != ($singular = $this->inflector->singularize($tableName)))
+            ($tableName != ($singular = $this->inflector->classify($tableName)))
         ) {
             $tableName = $singular;
         }
