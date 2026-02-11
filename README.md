@@ -54,6 +54,8 @@ The actual conversion to another schema is done using an exporter. These plugins
   ```
   php composer.phar require --dev mysql-workbench-schema-exporter/doctrine2-exporter
   ```
+  
+  4. For PHP 8 Attribute support (Doctrine 2 only), ensure you have doctrine2-exporter installed as mentioned above. The attribute formatter is included in the exporter package.
 
 
 ### Stand alone
@@ -173,6 +175,11 @@ General options applied to all formatter.
 - [Zend 1 Rest and DbTable](https://github.com/mysql-workbench-schema-exporter/zend1-exporter#formatter-setup-options)
 - [NodeJS Sequelize ](https://github.com/mysql-workbench-schema-exporter/node-exporter#formatter-setup-options)
 - [Sencha ExtJS3 and ExtJS4](https://github.com/mysql-workbench-schema-exporter/sencha-exporter#formatter-setup-options)
+
+## 解決常見問題
+
+- ["Unknown formatter" 錯誤](UNKNOWN-FORMATTER-FIX.md) - 如何解決 formatter 未找到的問題
+- [Attribute Class 文檔](ATTRIBUTE-CLASS-DOCUMENTATION.md) - PHP 8 Attribute 類的詳細文檔
 
 
 ## Command Line Interface (CLI)

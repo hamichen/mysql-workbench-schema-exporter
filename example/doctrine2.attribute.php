@@ -30,49 +30,64 @@
  * This example shows how to export a MySQL Workbench model to Doctrine 2.0
  * entity classes using PHP 8 Attributes instead of annotations.
  * 
+ * IMPORTANT: This requires that the doctrine2-exporter package is installed:
+ *   php composer.phar require --dev mysql-workbench-schema-exporter/doctrine2-exporter
+ * 
  * Requirements:
  *   - PHP 8.0 or higher
  *   - Doctrine ORM 2.10 or higher (for Attribute support)
+ *   - doctrine2-exporter package
  * 
  * Usage:
- *   php example/doctrine2.attribute.php
+ *   If you have doctrine2-exporter installed, you can use the CLI:
+ *   php bin/mysql-workbench-schema-export --export=doctrine2-attribute example/data/test.mwb output/
+ * 
+ *   Or use the composer script:
+ *   php composer.phar require --dev mysql-workbench-schema-exporter/doctrine2-exporter
  */
 
 // bootstrap
 require_once dirname(__FILE__).'/util.php';
 
-use MwbExporter\Formatter\Doctrine2\Attribute\Formatter;
+// NOTE: This example requires doctrine2-exporter to be installed
+// use MwbExporter\Formatter\Doctrine2\Attribute\Formatter;
+
 use MwbExporter\Bootstrap;
 use MwbExporter\Logger\LoggerConsole;
 use MwbExporter\Model\Document;
 
-// Formatter setup options
-// 
+echo "Doctrin2 Attribute Export Example\n";
+echo "==================================\n\n";
+
+echo "To use Doctrine 2 Attribute format, you need to:\n\n";
+
+echo "1. Install the doctrine2-exporter package:\n";
+echo "   php composer.phar require --dev mysql-workbench-schema-exporter/doctrine2-exporter\n\n";
+
+echo "2. Use the CLI command:\n";
+echo "   php bin/mysql-workbench-schema-export --export=doctrine2-attribute example/data/test.mwb ./output\n\n";
+
+echo "3. Or verify available exporters:\n";
+echo "   php bin/mysql-workbench-schema-export --list-exporter\n\n";
+
+echo "Note: The 'doctrine2-attribute' formatter is provided by the doctrine2-exporter package,\n";
+echo "not by the base mysql-workbench-schema-exporter framework.\n";
+
+// Formatter setup options (for reference)
+//
 // Please refer to the formatter documentation for a list of available setup options:
 // https://github.com/mysql-workbench-schema-exporter/doctrine2-exporter#formatter-setup-options
+
 $setup = array(
-    Formatter::CFG_USE_LOGGED_STORAGE           => true,
-    Formatter::CFG_INDENTATION                  => 4,
-    Formatter::CFG_FILENAME                     => '%entity%.%extension%',
-    Formatter::CFG_ATTRIBUTE_PREFIX             => 'ORM\\',  // Use ORM\ prefix for attributes
-    Formatter::CFG_BUNDLE_NAMESPACE             => '',
-    Formatter::CFG_ENTITY_NAMESPACE             => '',
-    Formatter::CFG_REPOSITORY_NAMESPACE         => '',
-    Formatter::CFG_AUTOMATIC_REPOSITORY         => true,
-    Formatter::CFG_SKIP_GETTER_SETTER           => false,
-    Formatter::CFG_GENERATE_ENTITY_SERIALIZATION => true,
-    Formatter::CFG_QUOTE_IDENTIFIER             => false,
+    // Note: Actual configuration keys depend on doctrine2-exporter implementation
+    // 'useAttributePrefix'          => 'ORM\\',
+    // 'bundleNamespace'             => 'App\\Entity',
+    // 'entityNamespace'             => 'Entity',
+    // 'repositoryNamespace'         => 'Repository',
+    // 'useAutomaticRepository'      => true,
+    // 'indentation'                 => 4,
+    // 'filename'                    => '%entity%.%extension%',
 );
 
-// Lets get some coffee
-echo sprintf("Exporting '%s' to Doctrine 2.0 Attribute Schema.\n\n", basename($filename));
+echo "For more information, see ATTRIBUTE-SETUP-GUIDE.md\n";
 
-// Create bootstrap and use a logger
-$bootstrap = new Bootstrap();
-$bootstrap->setLogger(new LoggerConsole());
-
-// Load document and export to specified directory
-$document = $bootstrap->export(new Formatter(), $filename, $dir, $setup);
-
-echo sprintf("\n\nLook at the generated code in '%s'.\n", $dir);
-echo "Done.\n";
