@@ -15,7 +15,8 @@ Currently, MySQL Workbench Schema Exporter can export the model to various schem
     [YAML Schema](http://docs.doctrine-project.org/projects/doctrine1/en/latest/en/manual/yaml-schema-files.html).
   * Doctrine 2.0
     [YAML Schema](http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/yaml-mapping.html),
-    [Annotation Classes](http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/annotations-reference.html)
+    [Annotation Classes](http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/annotations-reference.html),
+    [PHP 8 Attribute Classes](https://www.php.net/manual/en/language.attributes.overview.php)
     or Annotation Classes with [Zend Framework 2](http://framework.zend.com/)
     [Input Filter support](http://framework.zend.com/manual/2.1/en/modules/zend.input-filter.intro.html).
   * [Zend DbTable](http://framework.zend.com/manual/1.12/en/zend.db.table.html).
@@ -34,7 +35,7 @@ The actual conversion to another schema is done using an exporter. These plugins
 
 ## Prerequisites
 
-  * PHP 5.4+
+  * PHP 5.4+ (PHP 8.0+ required for Attribute support)
   * Composer to install the dependencies
 
 ## Installation
@@ -166,6 +167,7 @@ General options applied to all formatter.
 ## Formatter Setup Options
 
 - [Doctrine 2 Annotation, YAML and ZF2 Input Filter](https://github.com/mysql-workbench-schema-exporter/doctrine2-exporter#formatter-setup-options)
+- [Doctrine 2 PHP 8 Attributes](ATTRIBUTE-SETUP-GUIDE.md) - **新功能**: 如何設定和使用 PHP 8 Attribute 格式
 - [Doctrine 1 YAML](https://github.com/mysql-workbench-schema-exporter/doctrine1-exporter#formatter-setup-options)
 - [Propel 1 YAML and XML](https://github.com/mysql-workbench-schema-exporter/propel1-exporter#formatter-setup-options)
 - [Zend 1 Rest and DbTable](https://github.com/mysql-workbench-schema-exporter/zend1-exporter#formatter-setup-options)
@@ -229,6 +231,7 @@ Options:
 Sample usage:
 
     php bin/mysql-workbench-schema-export --export=doctrine1-yaml example/data/test.mwb ./generated
+    php bin/mysql-workbench-schema-export --export=doctrine2-attribute example/data/test.mwb ./generated
     php bin/mysql-workbench-schema-export --zip example/data/test.mwb
 
 Sample export parameters (JSON) for doctrine2-annotation:
@@ -251,6 +254,30 @@ Sample export parameters (JSON) for doctrine2-annotation:
             "quoteIdentifier": false
         }
     }
+
+Sample export parameters (JSON) for doctrine2-attribute (PHP 8+):
+
+    {
+        "export": "doctrine2-attribute",
+        "zip": false,
+        "dir": "temp",
+        "params": {
+            "backupExistingFile": true,
+            "skipPluralNameChecking": false,
+            "enhanceManyToManyDetection": true,
+            "bundleNamespace": "",
+            "entityNamespace": "",
+            "repositoryNamespace": "",
+            "useAttributePrefix": "ORM\\",
+            "useAutomaticRepository": true,
+            "indentation": 4,
+            "filename": "%entity%.%extension%",
+            "quoteIdentifier": false
+        }
+    }
+
+Note: When using `doctrine2-attribute`, the generated code will use PHP 8 attribute syntax 
+`#[ORM\Entity]` instead of annotation syntax `@ORM\Entity`. This requires PHP 8.0 or higher.
 
 ## Using MySQL Workbench Schema Exporter as Library
 
